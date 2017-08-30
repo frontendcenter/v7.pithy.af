@@ -12,7 +12,9 @@ class QuotePage extends React.Component {
       .then(response => response.json())
       .then(quote => {
         this.setState({ quote })
-      }, () => this.setState({ error: true }))
+      }, () => {
+        this.setState({ error: true })
+      })
   }
 
   render() {

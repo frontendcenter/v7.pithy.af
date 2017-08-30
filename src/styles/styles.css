@@ -171,10 +171,10 @@ html.wf-active .sans-serif {
     font-size: 1.75rem;
   }
   .Quote_Short[data-size="l"] {
-    font-size: 2.25rem;
+    font-size: 2rem;
   }
   .Quote_Short[data-size="m"] {
-    font-size: 2.5rem;
+    font-size: 2.25rem;
   }
 }
 

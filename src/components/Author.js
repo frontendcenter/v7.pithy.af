@@ -11,14 +11,15 @@ export class Author extends React.Component {
       .then(response => response.json())
       .then(quotes => {
         this.setState({ quotes })
-      }, () => this.setState({ error: true }))
+      }, () => {
+        this.setState({ error: true })
+      })
   }
 
   render() {
     const { quotes } = this.state
     return (
       <div className="Quotes">
-        { this.props.exclude && <div/> }
         {
           quotes && quotes.map((quote, i) =>
             this.props.exclude === quote.id
