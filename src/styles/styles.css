@@ -290,7 +290,7 @@ html.wf-active .Quote_Short em {
   text-decoration: underline;
 }
 .Link.-block {
-  display: block;
+  display: inline-block;
 }
 .Link:not(.-block) + .Link:not(.-block) {
   margin-left: 0.5rem;
