@@ -6,17 +6,23 @@ const store = observable({
   error: false
 })
 
-let loading = false
-export const getFeaturedQuotes = () => {
-  if (!loading) {
-    loading = true
-    fetch(`${API}/quotes/featured`)
-      .then(response => response.json())
-      .then(quotes => {
-        store.featured_quotes = quotes
-      }, () => {
-        store.error = true
-      })
+const fetchAndGetTogetherAtLast = (endpoint, fetcher, getter) => {
+  const fetched = new Set()
+
+  return (...args) => {
+    const key = JSON.stringify(args)
+    if (!fetched.has(key)) {
+      fetched.add(key)
+      fetch(endpoint(...args))
+        .then(response => response.json())
+        .then(fetcher, () => store.error = true)
+    }
+    return getter()
   }
-  return store.featured_quotes
 }
+
+export const getFeaturedQuotes = fetchAndGetTogetherAtLast(
+  () => `${API}/quotes/featured`,
+  (quotes) => store.featured_quotes = quotes,
+  () => store.featured_quotes,
+)
