@@ -35,3 +35,7 @@ export const getQuoteById = fetchAndGetTogetherAtLast({
 export const getQuotesByAuthor = fetchAndGetTogetherAtLast({
   hit_endpoint: id => `${API}/authors/${id}`,
 })
+
+export const getQuotesByWork = fetchAndGetTogetherAtLast({
+  hit_endpoint: id => `${API}/works/${id}`,
+})
