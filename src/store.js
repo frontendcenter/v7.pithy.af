@@ -1,5 +1,5 @@
 import { API } from './utils'
-import { observable, toJS, runInAction, extendObservable } from 'mobx'
+import { observable, toJS, runInAction, extendObservable, action } from 'mobx'
 
 const store = observable({
   featured_quote_ids: null,
@@ -8,7 +8,7 @@ const store = observable({
   error: false
 })
 
-const fetchAndGetTogetherAtLast = ({hit_endpoint, then_save, always_returning}) => {
+const fetchAndGetTogetherAtLast = ({ hit_endpoint, then_save, always_returning }) => {
   return (...args) => {
     const key = hit_endpoint(...args)
     console.log(key)
@@ -32,21 +32,11 @@ const fetchAndGetTogetherAtLast = ({hit_endpoint, then_save, always_returning}) 
   }
 }
 
-class Quote {
-  constructor(json) {
-    extendObservable(this, json)
-  }
-
-  upvote = () => {
-    this.score = this.score + 1
-  }
-}
-
 export const getFeaturedQuotes = fetchAndGetTogetherAtLast({
   hit_endpoint: () => `${API}/quotes/featured`,
   then_save: quotes => {
     store.featured_quote_ids = quotes.map(quote => {
-      store.quotes_by_id.set(quote.id, new Quote(quote))
+      store.quotes_by_id.set(quote.id, observable(quote))
       return quote.id
     })
   },
@@ -55,7 +45,7 @@ export const getFeaturedQuotes = fetchAndGetTogetherAtLast({
 
 export const getQuoteById = fetchAndGetTogetherAtLast({
   hit_endpoint: id => `${API}/quotes/${id}`,
-  then_save: (id, quote) => store.quotes_by_id.set(id, new Quote(quote)),
+  then_save: (id, quote) => store.quotes_by_id.set(id, observable(quote)),
   always_returning: id => store.quotes_by_id.get(id)
 })
 
@@ -65,4 +55,11 @@ export const getQuotesByAuthor = fetchAndGetTogetherAtLast({
 
 export const getQuotesByWork = fetchAndGetTogetherAtLast({
   hit_endpoint: id => `${API}/works/${id}`,
+})
+
+export const upvoteQuote = action(id => {
+  const quote = store.quotes_by_id.get(id)
+  console.log(quote)
+  quote.score += 1
+  console.log(toJS(store))
 })
