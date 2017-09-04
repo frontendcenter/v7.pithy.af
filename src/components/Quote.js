@@ -9,7 +9,7 @@ import ButtonLink from './ButtonLink'
 const SIZES = ['s', 's', 'm', 'l', 'l']
 
 const Quote = observer(({ quote }) => {
-  const { id, short, em_index, year, name, title, author_id, work_id, score } = quote
+  const { id, short, em_index, year, name, title, author_id, work_id, display_score } = quote
   const size = SIZES[Math.floor(short.length / 100)] || 'xl'
   let em = short.substr(0, em_index)
   return (
@@ -39,7 +39,7 @@ const Quote = observer(({ quote }) => {
           <ButtonLink onClick={quote.upvote}>
             <span role="img" aria-label="Add applause">👏</span>
           </ButtonLink>
-          <span style={{ opacity: '0.8', fontSize: '0.8em', marginLeft: '0.5rem' }}>({score || 0})</span>
+          <span style={{ opacity: '0.8', fontSize: '0.8em', marginLeft: '0.5rem' }}>({display_score || 0})</span>
         </div>
       </div>
     </div>

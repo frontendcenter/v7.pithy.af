@@ -7,13 +7,26 @@ const all_quotes = observable.map()
 
 class Quote {
   constructor(data) {
-    extendObservable(this, data)
+    extendObservable(this, data, {
+      upvotes_in_flight: 0,
+      get display_score() {
+        return this.score + this.upvotes_in_flight
+      }
+    })
   }
 
   upvote = () => {
-    this.score += 1
+    this.upvotes_in_flight += 1
+    //setTimeout(() =>
     fetch_json(`${API}/quotes/${this.id}/upvote`, { method: 'POST' })
-      .then(data => all_quotes.set(this.id, new Quote(data)))
+      .then(this.merge)
+      //.then(quote => all_quotes.set(quote.id, new Quote(quote)))
+      .then(() => this.upvotes_in_flight -= 1)
+    //, 2000)
+  }
+
+  merge = json => {
+    Object.assign(this, json)
   }
 
   static get(id) {
@@ -29,7 +42,7 @@ class Quote {
     if (!all_quotes.has(quote.id)) {
       all_quotes.set(quote.id, new Quote(quote))
     } else {
-      Object.assign(all_quotes.get(quote.id), quote)
+      all_quotes.get(quote.id).merge(quote)
     }
   }
 }
