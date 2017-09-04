@@ -5,10 +5,10 @@ import Quote from './Quote'
 import { simplify } from '../utils'
 import End from './End'
 import Link from './Link'
-import { getQuotesByWork } from '../store'
+import { QuoteLists } from '../store'
 
 export const Work = observer(({ id }) => {
-  const quotes = getQuotesByWork(id)
+  const quotes = QuoteLists.for_endpoint(`works/${id}`)
 
   return (
     <div className="Quotes">

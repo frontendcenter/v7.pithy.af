@@ -2,10 +2,10 @@ import React from 'react'
 import Quote from './Quote'
 import End from './End'
 import { observer } from 'mobx-react'
-import { getFeaturedQuotes } from '../store'
+import { QuoteLists } from '../store'
 
 const Home = () => {
-  const quotes = getFeaturedQuotes()
+  const quotes = QuoteLists.for_endpoint('quotes/featured')
   return (
     <div className="Quotes">
       {
