@@ -19,13 +19,13 @@ class Quote {
     this.upvotes_in_flight += 1
     //setTimeout(() =>
     fetch_json(`${API}/quotes/${this.id}/upvote`, { method: 'POST' })
-      .then(this.merge)
+      .then(this.update)
       //.then(quote => all_quotes.set(quote.id, new Quote(quote)))
       .then(() => this.upvotes_in_flight -= 1)
     //, 2000)
   }
 
-  merge = json => {
+  update = json => {
     Object.assign(this, json)
   }
 
@@ -42,7 +42,7 @@ class Quote {
     if (!all_quotes.has(quote.id)) {
       all_quotes.set(quote.id, new Quote(quote))
     } else {
-      all_quotes.get(quote.id).merge(quote)
+      all_quotes.get(quote.id).update(quote)
     }
   }
 }
