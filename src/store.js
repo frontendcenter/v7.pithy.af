@@ -1,5 +1,5 @@
 import { API } from './utils'
-import { observable, toJS, runInAction, extendObservable, action } from 'mobx'
+import { extendObservable } from 'mobx'
 
 const fetch_json = url => fetch(url).then(response => response.json())
 
@@ -49,7 +49,6 @@ class QuoteList {
     this.loading = true
     fetch_json(`${API}/${this.endpoint}`)
       .then(data => {
-        console.log(data)
         this.ids = data.map(quote => {
           QuotesById.set_quote(quote.id, quote)
           return quote.id
@@ -59,7 +58,6 @@ class QuoteList {
 
   to_json = () => {
     if (!this.loading) this.load()
-    console.log(this.ids)
     return this.ids && this.ids.map(QuotesById.get_quote)
   }
 
