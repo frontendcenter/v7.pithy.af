@@ -1,7 +1,7 @@
 import { API } from './utils'
 import { observable, extendObservable } from 'mobx'
 
-const fetch_json = url => fetch(url).then(response => response.json())
+const fetch_json = (url, opts = {}) => fetch(url, opts).then(response => response.json())
 
 const all_quotes = observable.map()
 
@@ -12,8 +12,8 @@ class Quote {
 
   upvote = () => {
     this.score += 1
-    fetch_json(`${API}/quotes/${id}`, )
-      .then(data => all_quotes.set(id, new Quote(data)))
+    fetch_json(`${API}/quotes/${this.id}/upvote`, { method: 'POST' })
+      .then(data => all_quotes.set(this.id, new Quote(data)))
   }
 
   static get(id) {
