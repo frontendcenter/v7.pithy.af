@@ -1,7 +1,9 @@
 import { API } from './utils'
-import { extendObservable } from 'mobx'
+import { observable, extendObservable } from 'mobx'
 
 const fetch_json = url => fetch(url).then(response => response.json())
+
+const all_quotes = observable.map()
 
 class Quote {
   constructor(data) {
@@ -10,31 +12,27 @@ class Quote {
 
   upvote = () => {
     this.score += 1
-  }
-}
-
-class Quotes {
-  constructor() {
-    extendObservable(this, {
-      quotes: new Map()
-    })
+    fetch_json(`${API}/quotes/${id}`, )
+      .then(data => all_quotes.set(id, new Quote(data)))
   }
 
-  set_quote(id, quote) {
-    this.quotes.set(id, new Quote(quote))
-  }
-
-  get_quote = id => {
-    if (!this.quotes.has(id)) {
-      this.quotes.set(id, null)
+  static get(id) {
+    if (!all_quotes.has(id)) {
+      all_quotes.set(id, null)
       fetch_json(`${API}/quotes/${id}`)
-        .then(data => this.quotes.set(id, data))
+        .then(data => all_quotes.set(id, new Quote(data)))
     }
-    return this.quotes.get(id)
+    return all_quotes.get(id)
+  }
+
+  static add(quote) {
+    if (!all_quotes.has(quote.id)) {
+      all_quotes.set(quote.id, new Quote(quote))
+    } else {
+      Object.assign(all_quotes.get(quote.id), quote)
+    }
   }
 }
-
-export const QuotesById = new Quotes()
 
 class QuoteList {
   constructor(endpoint) {
@@ -50,7 +48,7 @@ class QuoteList {
     fetch_json(`${API}/${this.endpoint}`)
       .then(data => {
         this.ids = data.map(quote => {
-          QuotesById.set_quote(quote.id, quote)
+          Quote.add(quote)
           return quote.id
         })
       })
@@ -58,7 +56,7 @@ class QuoteList {
 
   to_json = () => {
     if (!this.loading) this.load()
-    return this.ids && this.ids.map(QuotesById.get_quote)
+    return this.ids && this.ids.map(Quote.get)
   }
 
   static lists_by_endpoint = new Map()
@@ -72,7 +70,7 @@ class QuoteList {
 }
 
 const X = {
-  get: id => QuotesById.get_quote(id),
+  get: id => Quote.get(id),
   featured: () => QuoteList.for_endpoint('quotes/featured'),
   for_author: id => QuoteList.for_endpoint(`/authors/${id}`),
   for_work: id => QuoteList.for_endpoint(`works/${id}`)
