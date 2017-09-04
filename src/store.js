@@ -33,38 +33,50 @@ class Quotes {
     return this.quotes.get(id)
   }
 }
+
 export const QuotesById = new Quotes()
 
-class Lists {
-  constructor() {
+class QuoteList {
+  constructor(endpoint) {
+    this.endpoint = endpoint
+    this.loading = false
     extendObservable(this, {
-      lists: new Map()
+      ids: null
     })
   }
 
-  from_json(endpoint, data) {
-    this.lists.set(endpoint, data.map(quote => {
-      QuotesById.set_quote(quote.id, quote)
-      return quote.id
-    }))
+  load() {
+    this.loading = true
+    fetch_json(`${API}/${this.endpoint}`)
+      .then(data => {
+        console.log(data)
+        this.ids = data.map(quote => {
+          QuotesById.set_quote(quote.id, quote)
+          return quote.id
+        })
+      })
   }
 
-  for_endpoint(endpoint) {
-    if (!this.lists.has(endpoint)) {
-      this.lists.set(endpoint, null)
-      fetch_json(`${API}/${endpoint}`)
-        .then(data => this.from_json(endpoint, data))
-    }
-    const list = this.lists.get(endpoint)
-    return list && list.map(QuotesById.get_quote)
+  to_json = () => {
+    if (!this.loading) this.load()
+    console.log(this.ids)
+    return this.ids && this.ids.map(QuotesById.get_quote)
+  }
+
+  static lists_by_endpoint = new Map()
+
+  static for_endpoint(url) {
+    if (this.lists_by_endpoint.has(url)) return this.lists_by_endpoint.get(url).to_json()
+    const list = new QuoteList(url)
+    this.lists_by_endpoint.set(url, list)
+    return list.to_json()
   }
 }
-export const QuoteLists = new Lists()
 
 const X = {
   get: id => QuotesById.get_quote(id),
-  featured: QuoteLists.for_endpoint('quotes/featured'),
-  for_author: id => QuoteLists.for_endpoint(`/authors/${id}`),
-  for_work: id => QuoteLists.for_endpoint(`works/${id}`)
+  featured: () => QuoteList.for_endpoint('quotes/featured'),
+  for_author: id => QuoteList.for_endpoint(`/authors/${id}`),
+  for_work: id => QuoteList.for_endpoint(`works/${id}`)
 }
 export { X as Quotes }
