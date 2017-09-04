@@ -1,11 +1,10 @@
 import React from 'react'
 import { observer } from 'mobx-react'
 
- import Link from './Link'
+import Link from './Link'
 import LinkSVG from './LinkSVG'
 import { simplify } from '../utils'
 import ButtonLink from './ButtonLink'
-import { upvoteQuote } from '../store'
 
 const SIZES = ['s', 's', 'm', 'l', 'l']
 
@@ -37,10 +36,10 @@ const Quote = observer(({ quote }) => {
           <Link to={`/quote/${simplify(em)}-${id}`}>
             <LinkSVG/>
           </Link>
-          <ButtonLink onClick={() => upvoteQuote(id)}>
+          <ButtonLink onClick={quote.upvote}>
             <span role="img" aria-label="Add applause">👏</span>
           </ButtonLink>
-          <span style={{ opacity: '0.8', fontSize: '0.8em', marginLeft: '0.5rem' }}>({ score || 0 })</span>
+          <span style={{ opacity: '0.8', fontSize: '0.8em', marginLeft: '0.5rem' }}>({score || 0})</span>
         </div>
       </div>
     </div>
