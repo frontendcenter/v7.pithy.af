@@ -26,19 +26,22 @@ class Quote {
 
 const all_quotes = observable.map()
 
-Quote.add = quote => {
-  if (!all_quotes.has(quote.id)) {
-    all_quotes.set(quote.id, new Quote(quote))
+Quote.add = json => {
+  let quote = all_quotes.get(json.id)
+  if (quote) {
+    quote.update(json)
   } else {
-    all_quotes.get(quote.id).update(quote)
+    quote = new Quote(json)
+    all_quotes.set(json.id, quote)
   }
+  return quote
 }
 
 Quote.get = id => {
   if (!all_quotes.has(id)) {
     all_quotes.set(id, null)
     fetch_json(`${API}/quotes/${id}`)
-      .then(data => all_quotes.set(id, new Quote(data)))
+      .then(Quote.add)
   }
   return all_quotes.get(id)
 }
