@@ -3,10 +3,10 @@ import { observer } from 'mobx-react'
 
 import Quote from './Quote'
 import End from './End'
-import { QuoteLists } from '../store'
+import { Quotes } from '../store'
 
 export const Author = observer(({ id, exclude }) => {
-  const quotes = QuoteLists.for_endpoint(`/authors/${id}`)
+  const quotes = Quotes.for_author(id)
 
   return (
     <div className="Quotes">

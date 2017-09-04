@@ -60,3 +60,11 @@ class Lists {
   }
 }
 export const QuoteLists = new Lists()
+
+const X = {
+  get: id => QuotesById.get_quote(id),
+  featured: QuoteLists.for_endpoint('quotes/featured'),
+  for_author: id => QuoteLists.for_endpoint(`/authors/${id}`),
+  for_work: id => QuoteLists.for_endpoint(`works/${id}`)
+}
+export { X as Quotes }

@@ -3,10 +3,10 @@ import { observer } from 'mobx-react'
 
 import Quote from './Quote'
 import { Author } from './Author'
-import { QuotesById } from '../store'
+import { Quotes } from '../store'
 
 const QuotePage = observer(({ id }) => {
-  const quote = QuotesById.get_quote(id)
+  const quote = Quotes.get(id)
 
   return quote ? (
     <div>
