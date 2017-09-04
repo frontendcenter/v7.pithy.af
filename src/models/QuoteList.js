@@ -3,7 +3,7 @@ import { extendObservable } from 'mobx'
 import { API, fetch_json } from '../utils'
 import Quote from './Quote'
 
-export default class QuoteList {
+class QuoteList {
   constructor(endpoint) {
     this.endpoint = endpoint
     this.loading = false
@@ -26,13 +26,15 @@ export default class QuoteList {
     if (!this.loading) this.load()
     return this.ids && this.ids.map(Quote.get)
   }
-
-  static lists_by_endpoint = new Map()
-
-  static for_endpoint(url) {
-    if (this.lists_by_endpoint.has(url)) return this.lists_by_endpoint.get(url).to_json()
-    const list = new QuoteList(url)
-    this.lists_by_endpoint.set(url, list)
-    return list.to_json()
-  }
 }
+
+const lists_by_endpoint = new Map()
+
+QuoteList.for_endpoint = url => {
+  if (lists_by_endpoint.has(url)) return lists_by_endpoint.get(url).to_json()
+  const list = new QuoteList(url)
+  lists_by_endpoint.set(url, list)
+  return list.to_json()
+}
+
+export default QuoteList
