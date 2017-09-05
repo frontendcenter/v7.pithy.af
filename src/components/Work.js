@@ -5,10 +5,10 @@ import Quote from './Quote'
 import { simplify } from '../utils'
 import End from './End'
 import Link from './Link'
-import { Quotes } from '../store'
+import QuoteLists from '../models/QuoteList'
 
 export const Work = observer(({ id }) => {
-  const quotes = Quotes.for_work(id)
+  const quotes = QuoteLists.for_work(id)
 
   return (
     <div className="Quotes">
