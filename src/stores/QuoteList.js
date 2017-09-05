@@ -1,8 +1,8 @@
 import { API, fetch_json } from '../utils'
-import { CachedMap } from '../utils/CachedMap'
+import CachedMap from '../utils/CachedMap'
 import Quotes from './Quotes'
 
-const quote_lists = CachedMap({
+const quote_lists = new CachedMap({
   default_fetcher:
     endpoint => fetch_json(`${API}/${endpoint}`)
       .then(data => data.map(Quotes.add)),

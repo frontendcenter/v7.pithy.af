@@ -1,8 +1,8 @@
-import { CachedMap } from '../utils/CachedMap'
+import CachedMap from '../utils/CachedMap'
 import Quote from '../models/Quote'
 import { API, fetch_json } from '../utils/index'
 
-const all_quotes = CachedMap()
+const all_quotes = new CachedMap()
 
 const Quotes = {
   add: json =>
