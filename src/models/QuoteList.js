@@ -1,9 +1,11 @@
-import { API, CachedMap } from '../utils'
+import { API, CachedMap, fetch_json } from '../utils'
 import Quote from './Quote'
 
 const quote_lists = CachedMap({
-  url_fn: endpoint => `${API}/${endpoint}`,
-  before_save: data => data.map(Quote.add)
+  fetch_callback: endpoint =>
+    fetch_json(`${API}/${endpoint}`).then(data =>
+      data.map(Quote.add)
+    ),
 })
 
 const QuoteList = {

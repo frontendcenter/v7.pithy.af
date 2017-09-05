@@ -6,12 +6,11 @@ export const simplify = str => str.toLowerCase().replace(/[^\w ]/g, '').replace(
 
 export const fetch_json = (url, opts = {}) => fetch(url, opts).then(response => response.json())
 
-export const identity_fn = x => x
+export const _throw = message => { throw new Error(message) }
 
 export const CachedMap = ({
-  url_fn = String,
-  before_save = identity_fn,
-  key_fn = url_fn
+  key_fn = String, // Same as calling toString on the first arg but handles null/undefined
+  fetch_callback = _throw("Fetch callback is required to use a CachedMap")
 }) => {
   const _map = new ObservableMap()
 
@@ -21,8 +20,7 @@ export const CachedMap = ({
       const key = key_fn(...args)
       if (!_map.has(key)) {
         _map.set(key, null)
-        fetch_json(url_fn(...args))
-          .then(before_save)
+        fetch_callback(...args)
           .then(data => _map.set(key, data))
       }
       return _map.get(key)

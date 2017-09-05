@@ -23,6 +23,11 @@ class Quote {
     Object.assign(this, json)
   }
 }
+//
+//const all_quotes = CachedMap({
+//  url_fn: id => `${API}/quotes/${this.id}/upvote`,
+//  before_save: data => data.map(Quote.add)
+//})
 
 const all_quotes = observable.map()
 
