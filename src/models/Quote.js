@@ -1,6 +1,6 @@
 import { observable, extendObservable } from 'mobx'
 
-import { API, fetch_json } from '../utils'
+import { API, CachedMap, fetch_json } from '../utils'
 
 class Quote {
   constructor(data) {
@@ -23,32 +23,24 @@ class Quote {
     Object.assign(this, json)
   }
 }
-//
-//const all_quotes = CachedMap({
-//  url_fn: id => `${API}/quotes/${this.id}/upvote`,
-//  before_save: data => data.map(Quote.add)
-//})
 
-const all_quotes = observable.map()
+const all_quotes = CachedMap({
+  fetch_callback:
+    id => fetch_json(`${API}/quotes/${id}`)
+      .then(Quote.add),
+})
 
 Quote.add = json => {
-  let quote = all_quotes.get(json.id)
+  let quote = all_quotes._map.get(json.id)
   if (quote) {
     quote.update(json)
   } else {
     quote = new Quote(json)
-    all_quotes.set(json.id, quote)
+    all_quotes._map.set(json.id, quote)
   }
   return quote
 }
 
-Quote.get = id => {
-  if (!all_quotes.has(id)) {
-    all_quotes.set(id, null)
-    fetch_json(`${API}/quotes/${id}`)
-      .then(Quote.add)
-  }
-  return all_quotes.get(id)
-}
+Quote.get = all_quotes.get_or_fetch
 
 export default Quote
