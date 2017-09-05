@@ -6,7 +6,9 @@ export const simplify = str => str.toLowerCase().replace(/[^\w ]/g, '').replace(
 
 export const fetch_json = (url, opts = {}) => fetch(url, opts).then(response => response.json())
 
-export const _throw = message => { throw new Error(message) }
+export const _throw = message => {
+  throw new Error(message)
+}
 
 export const CachedMap = ({
   key_fn = String, // Same as calling toString on the first arg but handles null/undefined
@@ -24,6 +26,18 @@ export const CachedMap = ({
           .then(data => _map.set(key, data))
       }
       return _map.get(key)
+    },
+
+    create_or_update: (key, { create, update }) => {
+      const existing = _map.get(key)
+      if (existing) {
+        update(existing)
+        return existing
+      } else {
+        const created = create()
+        _map.set(key, created)
+        return created
+      }
     }
   }
 }

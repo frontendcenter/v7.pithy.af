@@ -1,4 +1,4 @@
-import { observable, extendObservable } from 'mobx'
+import { extendObservable } from 'mobx'
 
 import { API, CachedMap, fetch_json } from '../utils'
 
@@ -30,17 +30,11 @@ const all_quotes = CachedMap({
       .then(Quote.add),
 })
 
-Quote.add = json => {
-  let quote = all_quotes._map.get(json.id)
-  if (quote) {
-    quote.update(json)
-  } else {
-    quote = new Quote(json)
-    all_quotes._map.set(json.id, quote)
-  }
-  return quote
-}
+Quote.add = json => all_quotes.create_or_update(json.id, {
+  create: () => new Quote(json),
+  update: quote => quote.update(json),
+})
 
-Quote.get = all_quotes.get_or_fetch
+Quote.get = id => all_quotes.get_or_fetch(id)
 
 export default Quote
