@@ -1,17 +1,23 @@
+import { ObservableMap } from 'mobx'
 import { API, fetch_json } from '../utils'
-import CachedMap from '../utils/CachedMap'
 import Quotes from './Quotes'
 
-const quote_lists = new CachedMap({
-  default_fetcher:
-    endpoint => fetch_json(`${API}/${endpoint}`)
-      .then(data => data.map(Quotes.add)),
-})
+const quote_lists = new ObservableMap()
+
+const get_for_endpoint = (endpoint) => {
+  if (!quote_lists.has(endpoint)) {
+    quote_lists.set(endpoint, null)
+    fetch_json(`${API}/${endpoint}`)
+      .then(data => data.map(Quotes.add))
+      .then(quotes => quote_lists.set(endpoint, quotes))
+  }
+  return quote_lists.get(endpoint)
+}
 
 const QuoteList = {
-  featured: () => quote_lists.get_or_fetch('quotes/featured'),
-  for_author: id => quote_lists.get_or_fetch(`/authors/${id}`),
-  for_work: id => quote_lists.get_or_fetch(`works/${id}`)
+  featured: () => get_for_endpoint('quotes/featured'),
+  for_author: id => get_for_endpoint(`/authors/${id}`),
+  for_work: id => get_for_endpoint(`works/${id}`)
 }
 
 export default QuoteList
