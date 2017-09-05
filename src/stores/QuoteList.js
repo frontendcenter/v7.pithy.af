@@ -1,10 +1,11 @@
-import { API, CachedMap, fetch_json } from '../utils'
-import Quote from './Quote'
+import { API, fetch_json } from '../utils'
+import { CachedMap } from '../utils/CachedMap'
+import Quotes from './Quotes'
 
 const quote_lists = CachedMap({
-  fetch_callback:
+  default_fetcher:
     endpoint => fetch_json(`${API}/${endpoint}`)
-      .then(data => data.map(Quote.add)),
+      .then(data => data.map(Quotes.add)),
 })
 
 const QuoteList = {

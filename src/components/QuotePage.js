@@ -3,7 +3,7 @@ import { observer } from 'mobx-react'
 
 import Quote from './Quote'
 import { Author } from './Author'
-import Quotes from '../models/Quote'
+import Quotes from '../stores/Quotes'
 
 const QuotePage = observer(({ id }) => {
   const quote = Quotes.get(id)

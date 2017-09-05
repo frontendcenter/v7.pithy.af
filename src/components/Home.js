@@ -2,7 +2,7 @@ import React from 'react'
 import Quote from './Quote'
 import End from './End'
 import { observer } from 'mobx-react'
-import QuoteLists from '../models/QuoteList'
+import QuoteLists from '../stores/QuoteList'
 
 const Home = () => {
   const quotes = QuoteLists.featured()
